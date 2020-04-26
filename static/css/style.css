@@ -1,0 +1,140 @@
+html {
+    background-color: #eee;
+}
+
+header {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 56px;
+    background-color: #fff;
+    margin: 0px;
+}
+
+a {
+    text-decoration: none;
+    color: #000;
+}
+
+.btn {
+    position: relative;
+    border-radius: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    font-family: sans-serif;
+    text-align: center;
+}
+
+.icon {
+    margin: 10px;
+}
+
+.colored {
+    background-color: #f7f7f7;
+}
+
+a.vk-blue:hover {
+    color: #fff;
+    background-color: #7da1c8;
+}
+
+a.light-lime:hover {
+    background-color: #38b9e0;
+    color: #fff;
+}
+
+header > nav {
+    position: absolute;
+    right: 21px;
+    bottom: 19px;
+}
+.content {
+    font-size: 20px;
+    position: absolute;
+    width: 100%;
+    height: auto;
+    top: 57px;
+    left: 0px;
+}
+
+.content-block {
+    width: 91%;
+    margin-top: 20px;
+    margin-left: 3%;
+    background-color: #fff;
+    padding: 5px;
+    padding-left: 20px;
+    border-radius: 5px;
+}
+
+.navigation {
+    background-image: url(../img/nav_bg.jpg);
+    background-size: 100%;
+    margin-top: 2%;
+    margin-left: 30%;
+    padding: 20px;
+    padding-left: 15%;
+    width: 25%;
+    height: auto;
+    background-color: #fff;
+    border-radius: 5px;
+    font-family: sans-serif;
+}
+
+li {
+    margin-top: 1.5rem;
+}
+
+.login-form {
+    width: 30%;
+    min-width: 350px;
+    max-width: 450px;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 8%;
+    background-color: #fff;
+}
+
+.form-control {
+    margin-top: 15px;
+    margin-right: 25%;
+    text-align: right;
+}
+
+.work-input {
+    margin-top: 20px
+}
+
+form > .btn {
+    width: 100%;
+}
+
+.form-sumbit {
+    width: 100%;
+    margin-top: 10px;
+}
+
+input {
+    border: 2px solid #7da1c8;
+    border-radius: 5px;
+    height: 1.5rem;
+}
+
+.bordered {
+    border: 2px solid #7da1c8
+}
+
+.large {
+    width: 40%;
+}
+
+.medium {
+    width: 20%;
+}
