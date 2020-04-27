@@ -27,7 +27,11 @@ authed = []
 @app.route('/')
 @app.route('/index.html')
 def index():
-    return render_template('index.html', title='VGA')
+    params = {
+        'title': 'VGA',
+        'page': 'main'
+    }
+    return render_template('index.html', **params)
 
 
 @app.route('/about')
@@ -42,9 +46,9 @@ def logging():
     else:
         global authed
         if not list(session.query(User).filter(User.login == request.form['login'])):
-            return 'Пользователь не найден'
+            return render_template('login.html', error='err')
         if not list(session.query(User).filter(User.hashed_password == sha3(request.form['password']))):
-            return 'Пароль не совпадает'
+            return render_template('login.html', error='err')
 
         hash = sha3(request.form["password"])
         authed.append(hash)
@@ -69,7 +73,7 @@ def working_zone(token=None):
         params = {
             'error': '',
             'title': 'VGA User Interface',
-            'group_id': ''
+            'group': ''
         }
         return render_template('work_ui.html', **params)
     else:
@@ -77,21 +81,23 @@ def working_zone(token=None):
         if 'http://vk.com/' not in addr and 'https://vk.com/' not in addr:
             params = {
                 'title': 'VGA User Interface',
-                'group_id': '',
+                'group': '',
                 'error': 'err_didnt_find'
             }
             return render_template('work_ui.html', **params)
         elif parser.get_group(addr.split('vk.com/')[1]) is None:
             params = {
                 'title': 'VGA User Interface',
-                'group_id': '',
+                'group': '',
                 'error': 'err_didnt_find'
             }
             return render_template('work_ui.html', **params)
         else:
+            group_info = parser.get_group(addr.split('vk.com/')[1])
             params = {
                 'title': 'VGA User Interface',
-                'group_id': addr.split('vk.com/')[1],
+                'group': group_info,
+                'keys': group_info.keys(),
                 'error': ''
             }
             return render_template('work_ui.html', **params)
@@ -123,4 +129,4 @@ def registration():
 if __name__ == '__main__':
     db_session.global_init("db/user.sqlite")
     session = db_session.create_session()
-    app.run('192.168.0.15', 80)
+    app.run('192.168.0.105', 80)

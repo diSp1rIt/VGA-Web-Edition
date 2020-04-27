@@ -131,10 +131,14 @@ input {
     border: 2px solid #7da1c8
 }
 
-.large {
-    width: 40%;
-}
-
-.medium {
-    width: 20%;
+.about_group {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    width: 350px;
+    height: auto;
+    padding: 20px;
+    text-align: left;
 }

@@ -11,7 +11,7 @@ class VKParser:
             exit(-1)
 
     def get_group(self, group_id):
-        fields = 'id, name, screen_name, is_closed, deactivated'
+        fields = 'id, name, screen_name, is_closed, deactivated, city, country'
         try:
             response = self.vk_api.groups.getById(group_id=group_id, fields=fields, v='5.103')[0]
         except Exception as e:
@@ -20,9 +20,14 @@ class VKParser:
             converted_response = dict()
             for field in fields.split(', '):
                 if field not in response.keys():
-                    converted_response[field] = None
+                    converted_response[field.title()] = None
                 else:
-                    converted_response[field] = response[field]
+                    if field == 'city' or field == 'country':
+                        converted_response[field.title()] = response[field]['title']
+                    elif field == 'is_closed':
+                        converted_response[field.title()] = True if response[field] else False  
+                    else:
+                        converted_response[field.title()] = response[field]
             return converted_response
         return None
 

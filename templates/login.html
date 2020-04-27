@@ -1,38 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Вход</title>
-    <link rel="stylesheet" type="text/css" href="static/css/style.css">
-    <link rel="icon" href="static/img/icons/favicon.ico">
-</head>
-<body>
-<header>
-    <div>
-        <img class="icon"  style="height: 33px" src="static/img/icons/favicon.ico">
-        <a href="https://github.com/lev2454" class="btn" style="bottom: 21px">Vkontakte Groups Analyzer</a>
-        <h1 align="center" style="font-family: sans-serif; margin-top: -50px">Вход</h1>
+{% extends "base.html" %}
+{% block content %}
+    <div align="center">
+        <form class="login-form" method="post">
+            <div class="form-control">
+                <label for="login">Логин:</label>
+                <br>
+                <input id="login" name="login" required>
+            </div>
+            <div class="form-control">
+                <label for="passwd">Пароль:</label>
+                <br>
+                <input id="passwd" name="password" required type="password">
+            </div>
+            <div class="form-control">
+                {% if error == "err" %}
+                    <span style="color: #f00">Не верный логин или пароль</span>
+                {% endif %}
+            </div>
+            <button type="submit" class="btn form-sumbit">Войти</button>
+        </form>
     </div>
-</header>
-<a class="btn colored light-lime bordered" href="/" style="position: fixed; bottom: 20px; right: 3%; width: 92%">На
-    главную</a>
-<div align="center">
-    <form class="login-form" method="post">
-        <div class="form-control">
-            <label for="login">Логин:</label>
-            <br>
-            <input id="login" name="login" required>
-        </div>
-        <div class="form-control">
-            <label for="passwd">Пароль:</label>
-            <br>
-            <input id="passwd" name="password" required type="password">
-        </div>
-        <button type="submit" class="btn form-sumbit">Войти</button>
-    </form>
-</div>
-<div align="center" style="margin-top: 30px">
-    <a class="btn vk-blue" href="/register">Регистрация</a>
-</div>
-</body>
-</html>
+    <div align="center" style="margin-top: 30px">
+        <a class="btn vk-blue" href="/register">Регистрация</a>
+    </div>
+{% endblock %}
