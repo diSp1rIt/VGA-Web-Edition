@@ -30,8 +30,3 @@ class VKParser:
                         converted_response[field.title()] = response[field]
             return converted_response
         return None
-
-
-if __name__ == '__main__':
-    parser = VKParser('ebb21185498f0c050160fca5a63948ceba7cfa9e2bba2f6d900677069ccaf6e264f65a4dcff4fd1ff66f8')
-    print(parser.get_group('hajime'))
