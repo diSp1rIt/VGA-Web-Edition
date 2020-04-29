@@ -16,13 +16,12 @@ class User(SqlAlchemyBase):
 class UserVK(SqlAlchemyBase):
     __tablename__ = 'users_from_vk'
 
-    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
+    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
     groups = sqlalchemy.Column(sqlalchemy.String, index=True)
     firstname = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     lastname = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     sex = sqlalchemy.Column(sqlalchemy.Integer)
-    bdate = sqlalchemy.Column(sqlalchemy.Date, nullable=True)
+    bdate = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     city = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     country = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     domain = sqlalchemy.Column(sqlalchemy.String)
-    status = sqlalchemy.Column(sqlalchemy.String, nullable=True)

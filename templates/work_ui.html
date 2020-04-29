@@ -2,7 +2,7 @@
 {% block content %}
     <div class="content">
         {% if group == "" %}
-            <form method="post">
+            <form method="get">
                 <div class="work-input" align="center">
                     <label for="address">Ссылка на группу:</label>
                     <br>
@@ -18,12 +18,32 @@
                 </div>
             {% endif %}
         {% else %}
-            <div class="about_group">
-                <h2 align="center" style="margin-top: -10px">О группе:</h2>
-                {% for key in keys %}
-                    <span style="btn">{{key}}: {{group[key]}}</span>
-                    <hr>
-                {% endfor %}
+            <aside class="about_group">
+                <div align="center" style="padding-bottom: 20px;">
+                    <img src={{img}} style="max-width: 90%">
+                </div>
+                <h3 align="center" style="margin-top: -10px">О группе:</h3>
+                    {% for key in keys_group %}
+                        <span style="btn">{{key}}: {{group[key]}}</span>
+                        <hr>
+                    {% endfor %}
+            </aside>
+            <aside class="about_user">
+                <h3 align="center" style="margin-top: -10px">О пользователе:</h3>
+                    {% for key in keys_user %}
+                        <span style="btn">{{key}}: {{user[key]}}</span>
+                        <hr>
+                    {% endfor %}
+            </aside>
+            <div class="group_statistic">
+                {% if has_group == "updating" %}
+                <div>группа в обработке</div>
+                {% elif has_group %}
+                    <div>группы нет в базе данных</div>
+                {% else %}
+                    <h2>Группы нет в базе</h2>
+                    <a class="btn bordered colored vk-blue" href=/work_ui/{{token}}/request?group_id={{group["id"]}}>Отправить заявку на добавление в базу данных</a>
+                {% endif %}
             </div>
         {% endif %}
     </div>

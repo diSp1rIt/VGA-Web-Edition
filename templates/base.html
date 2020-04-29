@@ -19,6 +19,9 @@
             <a class="btn colored vk-blue">Поддержка</a>
         {% else %}
             <a class="btn colored light-lime bordered" href="/">На главную</a>
+            {% if main_url %}
+                <a class="btn colored light-lime bordered" href={{main_url}}>Выбрать другую группу</a>
+            {% endif %}
         {% endif %}
     </nav>
 </header>
