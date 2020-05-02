@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="content">
+    <div class="content-block">
+        Ваша запрос обрабатывается...<br>
+        Примерное время ожидания: {{hour}} ч {{minutes}} мин<br>
+        Запросов в очереди: {{tasks}}<br>
+        Ваш номер: {{current}}
+        <a class="btn bordered light-lime">Назад</a>
+    </div>
+</div>
+{% endblock %}

@@ -42,7 +42,7 @@ class VKParser:
         except Exception as e:
             print(e)
         else:
-            return response['photo_200']
+            return response['photo_max']
 
     def get_user(self, user_id):
         fields = ['id', 'first_name', 'last_name', 'verified', 'sex', 'bdate', 'city', 'country', 'home_town', 'domain',
@@ -68,10 +68,10 @@ class VKParser:
             return converted_response
         return None
 
-    def get_all_users(self, group_id, session=None):
+    def get_all_users(self, group_id, session=None, time=None):
         try:
-            i = 0
-            count = self.vk_api.groups.getMembers(count=0, offset=0, v='5.103', group_id=group_id)['count']
+            hour, mins, count = time
+            print(f'Примерное время ожидания обновлени данных по {group_id}: {hour} ч. {mins:.2f} мин.')
             fields = ['id', 'first_name', 'last_name', 'sex', 'bdate', 'city', 'country', 'domain']
 
             def getting(os):
@@ -81,7 +81,6 @@ class VKParser:
                 if data is not None:
                     with open(f'temp_files/temp{os}.json', 'w') as f:
                         json.dump(data, f)
-                    data = None
                 else:
                     print('Data is None.')
 
@@ -96,8 +95,8 @@ class VKParser:
                         data = json.load(f)
                     remove(f'temp_files/temp{offset}.json')
                 else:
-                    data = self.vk_api.groups.getMembers(offset=offset, v='5.103', group_id=group_id, fields=', '.join(fields))[
-                        'items']
+                    data = self.vk_api.groups.getMembers(offset=offset, v='5.103', group_id=group_id,
+                                                         fields=', '.join(fields))['items']
                     sleep(1)
                 for user in data:
                     if not list(session.query(UserVK).filter(UserVK.id == user['id'])):
@@ -124,11 +123,16 @@ class VKParser:
                     else:
                         old_user = session.query(UserVK).filter(UserVK.id == user['id']).first()
                         old_user.groups = old_user.groups + ', ' + group_id
-                print(i * 1000)
-                i += 1
             session.commit()
-            print('Commited')
+            print('ЗАВЕРШЕНО')
         except Exception as e:
+            print('НЕУДАЧА')
             print(e)
-            return 'terminate'
+            return 1
         return 0
+
+    def get_time(self, group_id):
+        count = self.vk_api.groups.getMembers(count=0, offset=0, v='5.103', group_id=group_id)['count']
+        hour = int(count / 441 // 3600)
+        mins = round((count / 441 - hour * 3600) / 60 * 100) / 100
+        return hour, mins, count

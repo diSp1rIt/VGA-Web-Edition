@@ -39,10 +39,10 @@
                 {% if has_group == "updating" %}
                 <div>группа в обработке</div>
                 {% elif has_group %}
-                    <div>группы нет в базе данных</div>
+                    <div>группа есть базе данных</div>
                 {% else %}
                     <h2>Группы нет в базе</h2>
-                    <a class="btn bordered colored vk-blue" href=/work_ui/{{token}}/request?group_id={{group["id"]}}>Отправить заявку на добавление в базу данных</a>
+                    <a class="btn bordered colored vk-blue" href=/work_ui/request?group_id={{group["id"]}}>Отправить заявку на добавление в базу данных</a>
                 {% endif %}
             </div>
         {% endif %}
