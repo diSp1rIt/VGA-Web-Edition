@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% block content %}
-    <div class="content">
         {% if group == "" %}
             <form method="get">
                 <div class="work-input" align="center">
@@ -24,27 +23,39 @@
                 </div>
                 <h3 align="center" style="margin-top: -10px">О группе:</h3>
                     {% for key in keys_group %}
-                        <span style="btn">{{key}}: {{group[key]}}</span>
+                        <span>{{key}}: {{group[key]}}</span>
                         <hr>
                     {% endfor %}
             </aside>
             <aside class="about_user">
                 <h3 align="center" style="margin-top: -10px">О пользователе:</h3>
                     {% for key in keys_user %}
-                        <span style="btn">{{key}}: {{user[key]}}</span>
+                        <span>{{key}}: {{user[key]}}</span>
                         <hr>
                     {% endfor %}
             </aside>
             <div class="group_statistic">
                 {% if has_group == "updating" %}
-                <div>группа в обработке</div>
+                <h2 style="margin-top: 0px">Группа в обработке</h2>
+                <a class="btn colored bordered vk-blue" href=/work_ui/request?group_id={{group["id"]}}&scr_name={{scr_name}}>Статус</a>
+                <a href="/tasks_list" class="btn colored bordered vk-blue">Список текущих задач</a>
                 {% elif has_group %}
-                    <div>группа есть базе данных</div>
+                    <div class="btn bordered">
+                        <h4>Состав:</h4>
+                        <img src=/static/info/{{group["id"]}}/deactivated_info.png width="50%" class="bordered">
+                    </div>
+                    <div class="btn bordered">
+                        <h4>Половой состав:</h4>
+                        <img src=/static/info/{{group["id"]}}/sex_info.png width="50%" class="bordered">
+                    </div>
+                    <div class="btn bordered">
+                        <h4>Возрастной график</h4>
+                        <img src=/static/info/{{group["id"]}}/ages_info.png width="90%" class="bordered">
+                    </div>
                 {% else %}
-                    <h2>Группы нет в базе</h2>
-                    <a class="btn bordered colored vk-blue" href=/work_ui/request?group_id={{group["id"]}}>Отправить заявку на добавление в базу данных</a>
+                    <h2 style="margin-top: 0px">Группы нет в базе</h2>
+                    <a class="btn bordered colored vk-blue" href=/work_ui/request?group_id={{group["id"]}}&scr_name={{scr_name}}>Отправить заявку на добавление в базу данных</a>
                 {% endif %}
             </div>
         {% endif %}
-    </div>
 {% endblock %}

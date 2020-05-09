@@ -10,7 +10,7 @@
 <header>
     <div>
         <img class="icon"  style="height: 33px" src="/static/img/icons/favicon.ico">
-        <a href="https://github.com/lev2454" class="btn" style="bottom: 21px">Vkontakte Groups Analyzer</a>
+        <a href="https://github.com/lev2454" class="btn" target="_blank" style="bottom: 21px">Vkontakte Groups Analyzer</a>
     </div>
     <nav>
         {% if page == "main" %}
@@ -25,7 +25,9 @@
         {% endif %}
     </nav>
 </header>
-{% block content %}
-{% endblock %}
+<div class="content">
+    {% block content %}
+    {% endblock %}
+</div>
 </body>
 </html>
