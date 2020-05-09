@@ -1,12 +1,27 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="content">
-    <div class="content-block">
-        Ваша запрос обрабатывается...<br>
-        Примерное время ожидания: {{hour}} ч {{minutes}} мин<br>
-        Запросов в очереди: {{tasks}}<br>
-        Ваш номер: {{current}}
-        <a class="btn bordered light-lime">Назад</a>
-    </div>
+<div class="content-block">
+    {% if err == "err_access_denied" %}
+        <p>Группа скрывает своих пользователей.</p>
+        <p>Мы не имеем доступ к пользователям.</p>
+        <p>Приносим свои извинения</p>
+        <a class="btn bordered light-lime" style="margin-top: 20px" href=/work_ui?address=https%3A%2F%2Fvk.com%2F{{scr_name}}>Назад</a>
+    {% else %}
+        <p>Ваша запрос обрабатывается...</p>
+        <p>Примерное время обновления: {{time}}</p>
+        <p>Общее время ожидания: {{all_time}}</p>
+        <p>Время завершения: {{ending}}</p>
+        <p>Запросов в очереди: {{tasks}}</p>
+        <p>Ваш номер: {{current}}</p>
+        <a class="btn bordered light-lime" style="margin-top: 20px" href=/work_ui?address=https%3A%2F%2Fvk.com%2F{{scr_name}}>Назад</a>
+        {% if required_msg %}
+        <a class="btn bordered light-lime" style="margin-top: 20px"
+           href="/work_ui/request?group_id={{group_id}}&scr_name={{scr_name}}&send_email=true">Отправить письмо на почту
+            после завершения</a>
+        {% else %}
+        <a class="btn bordered light-lime" style="margin-top: 20px"
+           href="/work_ui/request?group_id={{group_id}}&scr_name={{scr_name}}&send_email=false">Отменить отправку письма</a>
+        {% endif %}
+    {% endif %}
 </div>
 {% endblock %}

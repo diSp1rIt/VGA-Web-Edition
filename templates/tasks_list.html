@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+    <button class="btn bordered colored vk-blue" onclick="window.history.back()" style="width: 98%; margin: 1%">Назад</button>
+    <h3 align="center">Список задач</h3>
+    {% for task in task_list %}
+        <div class="bordered" style="margin: 1%; padding: 15px; border-radius: 5px; width: 96%; background-color: #fff">
+            <img height="50px" style="border-radius: 10%" src={{task["img"]}}>
+            <div style="position: fixed; margin-left: 70px; margin-top: -60px">
+                <p>{{task["name"]}}</p>
+            </div>
+            <a class="btn bordered colored vk-blue" style="position: absolute; right:20px" href=/work_ui/request?group_id={{task["id"]}}&scr_name={{task["scr_name"]}}>Статус</a>
+        </div>
+    {% endfor %}
+{% endblock %}

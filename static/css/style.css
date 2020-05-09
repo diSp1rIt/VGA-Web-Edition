@@ -71,6 +71,7 @@ header > nav {
     background-color: #fff;
     padding: 5px;
     padding-left: 20px;
+    padding-bottom: 20px;
     border-radius: 5px;
 }
 
@@ -146,10 +147,11 @@ input {
     top: 20px;
     left: 24.5%;
     width: 50%;
+    max-width: 50%;
     height: auto;
     background-color: #fff;
     border-radius: 10px;
-    padding: 10px;
+    padding: 30px;
 }
 
 .about_user {
