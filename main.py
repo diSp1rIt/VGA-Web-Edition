@@ -9,6 +9,7 @@ from modules import VKApi
 from config import *
 from flask_mail import Mail, Message
 from os import path
+from random import randint as ri
 
 # Цвета для вывода всяких отладочных данных в консоль
 W = Fore.WHITE
@@ -38,8 +39,9 @@ app.config.update(
 mail = Mail(app)
 parser = VKApi.VKParser(TOKEN)  # Парсер групп вк
 tasks_for_add_to_db = []  # Списко задач на обновление базы данных
-
 mails_to_send = {}  # ключ - id группы, значение - список почт
+__domain__ = 'localhost'
+__port__ = 8080
 
 
 # Функция обновления/добавление пользователей
@@ -63,16 +65,17 @@ def add_from_tasks():
         # отладчике, но на самом сайте.                                             #
         #############################################################################
 
-        err = task[0](task[1], task[2], task[3])  # По окончанию обновления парсер вернет 0, если всё успешно
+        err = task[0](task[1], task[2], task[3])  # 0 - без ошибок
         if err:
             print(f'Отмена в выполнении добавления/обновления базы данных. Группа: {task[1]}')
         else:
             if len(mails_to_send[int(task[1])]):
                 with app.app_context():
                     msg = Message('Завершено', recipients=mails_to_send[int(task[1])])
-                    msg.body = f'Данные по группе с названием: "{session_db.query(Group).filter(Group.id == int(task[1])).first().name}" обновлены.'
+                    group_name = session_db.query(Group).filter(Group.id == int(task[1])).first().name
+                    msg.body = f'Данные по группе с названием: "{group_name}" обновлены.'
                     mail.send(msg)
-            del tasks_for_add_to_db[tasks_for_add_to_db.index(task)]  # Удаление задачи после удачного завершения
+            del tasks_for_add_to_db[tasks_for_add_to_db.index(task)]
 
 
 procedure = Thread(target=add_from_tasks)  # Поток функции обновления
@@ -98,20 +101,24 @@ def about():
 # Обработка страници входа
 @app.route('/login', methods=['GET', 'POST'])
 def logging():
+
+    # Создание сессии
     if 'authorized' not in session:
         session['authorized'] = 0
+
+    # Проврека на авторизованность и наличие почты
     if session.get('authorized') and session.get('email') is not None:
         return redirect(f'/work_ui')
     else:
         if request.method == 'GET':
             return render_template('login.html')
         else:
+            hashed_pass = sha3(request.form['password'])
             if not list(session_db.query(User).filter(User.login == request.form['login'])):
                 return render_template('login.html', error='err')
-            if not list(session_db.query(User).filter(User.hashed_password == sha3(request.form['password']))):
+            if not list(session_db.query(User).filter(User.hashed_password == hashed_pass)):
                 return render_template('login.html', error='err')
             user = session_db.query(User).filter(User.login == request.form['login']).first()
-            print(user.email)
             session['authorized'] = 1
             session['email'] = user.email
             session.permanent = True
@@ -163,38 +170,46 @@ def working_zone():
             }
             print('Bad url')
             return render_template('work_ui.html', **params)
-        elif not list(session_db.query(Group).filter((Group.screen_name == addr.split('vk.com/')[1]) | (
-                Group.screen_name == f'club{addr.split("vk.com/")[1]}'))):
-            print('Group didn\'t find in db')
-            print('Try find in VK')
-            response = parser.get_group(addr.split('vk.com/')[1])
-            if response is None:
-                print('Group not exists')
-                params = {
-                    'title': 'VGA User Interface',
-                    'group': '',
-                    'error': 'err_didnt_find'
-                }
-                return render_template('work_ui.html', **params)
-            else:
-                print('Group found')
-                print('Adding to db')
-                new_group = Group()
-                new_group.id = response['id']
-                new_group.screen_name = response['screen_name']
-                new_group.is_closed = response['is_closed']
-                new_group.deactivated = response['deactivated']
-                new_group.description = response['description']
-                new_group.city = response['city']
-                new_group.country = response['country']
-                new_group.name = response['name']
-                new_group.icon = response['photo_200']
-                session_db.add(new_group)
-                session_db.commit()
-                print('Group added to db')
-        group_id = addr.split('vk.com/')[1]
-        group_info = session_db.query(Group).filter(
-            (Group.screen_name == group_id) | (Group.screen_name == f'club{group_id}')).first()
+        else:
+            screen_name = addr.split('vk.com/')[1]
+            if not list(session_db.query(Group).filter((Group.screen_name == screen_name))):
+                response = parser.get_group(screen_name)
+                if response is None:
+                    if 'public' in screen_name:
+                        screen_name = 'club' + screen_name.strip('public')
+                    elif 'event' in screen_name:
+                        screen_name = 'club' + screen_name.strip('event')
+            if not list(session_db.query(Group).filter((Group.screen_name == screen_name))):
+                print('Group didn\'t find in db')
+                print('Try find in VK')
+                response = parser.get_group(screen_name)
+                if response is None:
+                    print('Group not exists')
+                    params = {
+                        'title': 'VGA User Interface',
+                        'group': '',
+                        'error': 'err_didnt_find'
+                    }
+                    return render_template('work_ui.html', **params)
+                else:
+                    print('Group found')
+                    print('Adding to db')
+
+                    new_group = Group()
+                    new_group.id = response['id']
+                    new_group.screen_name = response['screen_name']
+                    new_group.is_closed = response['is_closed']
+                    new_group.deactivated = response['deactivated']
+                    new_group.description = response['description']
+                    new_group.city = response['city']
+                    new_group.country = response['country']
+                    new_group.name = response['name']
+                    new_group.icon = response['photo_200']
+                    session_db.add(new_group)
+                    session_db.commit()
+
+                    print('Group added to db')
+        group_info = session_db.query(Group).filter((Group.screen_name == screen_name)).first()
         url_group_photo = group_info.icon
         keys = ['id', 'name', 'description', 'city', 'country', 'screen_name', 'is_closed', 'deactivated']
         params = {
@@ -228,13 +243,12 @@ def request_to_update_data():
         print('Has update time')
         update_time = round(datetime.datetime.timestamp(group.update_time))
         now_time = round(datetime.datetime.timestamp(datetime.datetime.now()))
-
         print(datetime.timedelta(seconds=(now_time - update_time)).days)
-
         if datetime.timedelta(seconds=(now_time - update_time)).days < 31:
             scr_name = session_db.query(Group).filter(Group.id == int(group_id)).first().screen_name
             return redirect(f'/work_ui?address=https%3A%2F%2Fvk.com%2F{scr_name}')
-    short_tasks_list = [elem[1] for elem in tasks_for_add_to_db]  # Список заданий состоящий из id групп
+    short_tasks_list = [elem[1] for elem in
+                        tasks_for_add_to_db]  # Список заданий состоящий из id групп
     if group_id not in short_tasks_list:
         time = parser.get_time(group_id)
         if time == 'err_access_denied':
@@ -295,7 +309,12 @@ def tasks_listing():
     return render_template('tasks_list.html', task_list=tasks)
 
 
+@app.route('/support')
+def support():
+    return render_template('support.html')
+
+
 if __name__ == '__main__':
     db_session.global_init("db/user.sqlite")
     session_db = db_session.create_session()
-    app.run('192.168.0.101', 8080)
+    app.run(__domain__, __port__)

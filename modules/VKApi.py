@@ -83,8 +83,18 @@ class VKParser:
 
             for offset in range(0, count + 1, 1000):
                 start_time = timelib.time()
-                data = self.vk_api.groups.getMembers(offset=offset, v='5.103', group_id=group_id,
-                                                     fields=', '.join(fields))['items']
+                while True:
+                    try:
+                        data = \
+                            self.vk_api.groups.getMembers(offset=offset, v='5.103',
+                                                          group_id=group_id,
+                                                          fields=', '.join(fields))['items']
+                    except Exception as e:
+                        print(e)
+                        timelib.sleep(1)
+                        print('Retrying')
+                    else:
+                        break
                 for user in data:
                     if user['sex'] == 1:
                         womans_count += 1
@@ -111,9 +121,8 @@ class VKParser:
                             else:
                                 ages_count[99] += 1
                 end_time = round((timelib.time() - start_time) * 10) / 10
-                print(end_time)
-                if end_time < 0.06:
-                    timelib.sleep(0.06 - end_time)
+                if end_time < 0.05:
+                    timelib.sleep(0.05 - end_time)
 
             if not path.exists(f'static/info/{group_id}'):
                 mkdir(f'static/info/{group_id}')
@@ -153,7 +162,8 @@ class VKParser:
             ax1.xaxis.set_major_locator(ticker.MultipleLocator(5))
             last_font_size = plt.rcParams['font.size']
             plt.rcParams['font.size'] = 22
-            ax1.legend(labels=['Общий возрастной график', 'Женщины', 'Мужчины'], bbox_to_anchor=(1.1, 1.1))
+            ax1.legend(labels=['Общий возрастной график', 'Женщины', 'Мужчины'],
+                       bbox_to_anchor=(1.1, 1.1))
             plt.savefig(f'static/info/{group_id}/ages_info.png')
             plt.rcParams['figure.figsize'] = [6.4, 4.8]
             plt.rcParams['font.size'] = last_font_size
@@ -176,6 +186,6 @@ class VKParser:
                 'count']
         except Exception as e:
             return 'err_access_denied'
-        hour = int(count / 441 // 3600)
-        mins = round((count / 441 - hour * 3600) / 60)
+        hour = int(count / 1000 * 0.5 // 3600)
+        mins = round((count / 1000 * 0.5 - hour * 3600) / 60)
         return hour, mins, count

@@ -27,13 +27,6 @@
                         <hr>
                     {% endfor %}
             </aside>
-            <aside class="about_user">
-                <h3 align="center" style="margin-top: -10px">О пользователе:</h3>
-                    {% for key in keys_user %}
-                        <span>{{key}}: {{user[key]}}</span>
-                        <hr>
-                    {% endfor %}
-            </aside>
             <div class="group_statistic">
                 {% if has_group == "updating" %}
                 <h2 style="margin-top: 0px">Группа в обработке</h2>
