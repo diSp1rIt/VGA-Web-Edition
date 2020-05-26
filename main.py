@@ -9,7 +9,9 @@ from modules import VKApi
 from config import *
 from flask_mail import Mail, Message
 from os import path
-from random import randint as ri
+import AuthSystem
+import apiResources
+from flask_restful import Api
 
 # Цвета для вывода всяких отладочных данных в консоль
 W = Fore.WHITE
@@ -26,20 +28,17 @@ def sha3(string):
 
 # Запуск и настройка программы
 app = Flask(__name__)
-app.config['SECRET_KEY'] = sha3('httpsgithubcomlev2454')
-app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(days=2)
-app.config.update(
-    MAIL_SERVER='smtp.googlemail.com',
-    MAIL_PORT=587,
-    MAIL_USE_TLS=True,
-    MAIL_USERNAME='groupanalyzer@gmail.com',
-    MAIL_PASSWORD=MAIL_PASSWD,
-    MAIL_DEFAULT_SENDER='groupanalyzer@gmail.com'
-)
+app.config['SECRET_KEY'] = sha3(SECRET_KEY)
+app.config['PERMANENT_SESSION_LIFETIME'] = PERMANENT_SESSION_LIFETIME
+app.config.update(**MAIL_CFG)
 mail = Mail(app)
 parser = VKApi.VKParser(TOKEN)  # Парсер групп вк
 tasks_for_add_to_db = []  # Списко задач на обновление базы данных
 mails_to_send = {}  # ключ - id группы, значение - список почт
+api = Api(app)
+api.add_resource(apiResources.UserResource, '/api/user/<int:user_id>')
+api.add_resource(apiResources.GroupResource, '/api/group/<string:group_id>')
+loginSys = AuthSystem.Logging()
 __domain__ = 'localhost'
 __port__ = 8080
 
@@ -101,14 +100,11 @@ def about():
 # Обработка страници входа
 @app.route('/login', methods=['GET', 'POST'])
 def logging():
-
-    # Создание сессии
-    if 'authorized' not in session:
-        session['authorized'] = 0
-
-    # Проврека на авторизованность и наличие почты
-    if session.get('authorized') and session.get('email') is not None:
+    code = loginSys.check_web_session(session)
+    if code == 0:
         return redirect(f'/work_ui')
+    if code == 2:
+        return redirect('/register')
     else:
         if request.method == 'GET':
             return render_template('login.html')

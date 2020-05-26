@@ -1,9 +1,10 @@
 import datetime
 import sqlalchemy
 from .db_session import SqlAlchemyBase
+from sqlalchemy_serializer import SerializerMixin
 
 
-class Group(SqlAlchemyBase):
+class Group(SqlAlchemyBase, SerializerMixin):
     __tablename__ = 'groups'
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
