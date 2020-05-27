@@ -36,6 +36,7 @@ parser = VKApi.VKParser(TOKEN)  # Парсер групп вк
 tasks_for_add_to_db = []  # Списко задач на обновление базы данных
 mails_to_send = {}  # ключ - id группы, значение - список почт
 api = Api(app)
+api.add_resource(apiResources.UserListResource, '/api/user')
 api.add_resource(apiResources.UserResource, '/api/user/<int:user_id>')
 api.add_resource(apiResources.GroupResource, '/api/group/<string:group_id>')
 loginSys = AuthSystem.Logging()
